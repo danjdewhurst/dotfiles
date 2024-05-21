@@ -14,18 +14,9 @@ antigen use oh-my-zsh
 # Bundles
 antigen bundle zsh-users/zsh-completions
 antigen bundle zsh-users/zsh-autosuggestions
-antigen bundle nvm
-antigen bundle npm
-antigen bundle node
-antigen bundle laravel
 antigen bundle pyenv
-# antigen bundle rust
-antigen bundle wp-cli
-antigen bundle redis-cli
-# antigen bundle dotenv
-# antigen bundle docker
 antigen bundle autojump
-antigen bundle Sparragus/zsh-auto-nvm-use
+antigen bundle Aloxaf/fzf-tab
 
 # Last bundle - syntax highlighting
 antigen bundle zsh-users/zsh-syntax-highlighting
@@ -35,11 +26,6 @@ antigen theme romkatv/powerlevel10k
 
 # Load everything
 antigen apply
-
-# nvm
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
@@ -65,6 +51,25 @@ dbs() {
 }
 
 # Custom aliases
-alias eza="ls"
+alias ls="eza --icons=always"
 alias artisan="php artisan"
 alias proj="cd ~/Projects"
+alias cd="z"
+alias gfa="git_fetch_all"
+alias gpa="git_pull_all"
+
+# history setup
+HISTFILE=$HOME/.zhistory
+SAVEHIST=1000
+HISTSIZE=999
+setopt share_history
+setopt hist_expire_dups_first
+setopt hist_ignore_dups
+setopt hist_verify
+
+# completion using arrow keys (based on history)
+bindkey '^[[A' history-search-backward
+bindkey '^[[B' history-search-forward
+
+# ---- Zoxide (better cd) ----
+eval "$(zoxide init zsh)"
