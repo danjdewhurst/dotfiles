@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# Function to check if a directory is a git repository
+is_git_repository() {
+    [ -d "$1/.git" ]
+}
+
+# Function to fetch in all git repositories within a base directory
+fetch_in_repositories() {
+    for dir in "$1"/*; do
+        if [ -d "$dir" ]; then
+            if is_git_repository "$dir"; then
+                echo "Fetching in $dir..."
+                git -C "$dir" fetch
+                echo "Completed fetching in $dir"
+                echo
+            fi
+        fi
+    done
+}
+
+# Main function to handle input and start the process
+main() {
+    if [ "$#" -ne 1 ]; then
+        echo "Usage: $0 <directory>"
+        exit 1
+    fi
+
+    base_dir="$1"
+
+    if [ ! -d "$base_dir" ]; then
+        echo "Error: $base_dir is not a directory or does not exist."
+        exit 1
+    fi
+
+    fetch_in_repositories "$base_dir"
+}
+
+main "$@"
+
