@@ -52,11 +52,20 @@ dbs() {
 
 # Custom aliases
 alias ls="eza --icons=always"
-alias artisan="php artisan"
 alias proj="cd ~/Projects"
 alias cd="z"
 alias gfa="git_fetch_all"
 alias gpa="git_pull_all"
+
+# DDEV
+alias artisan="ddev php artisan"
+alias node="ddev exec node"
+alias npm="ddev npm"
+alias npx="ddev exec npx"
+alias composer="ddev composer"
+alias sql="ddev sequelace"
+alias php="ddev php"
+alias pest="ddev php ./vendor/bin/pest"
 
 # history setup
 HISTFILE=$HOME/.zhistory
@@ -73,3 +82,6 @@ bindkey '^[[B' history-search-forward
 
 # ---- Zoxide (better cd) ----
 eval "$(zoxide init zsh)"
+
+# path
+export PATH="/Users/dan/.jetbrains:$PATH"
