@@ -57,7 +57,7 @@ alias cd="z"
 alias gfa="git_fetch_all"
 alias gpa="git_pull_all"
 
-# DDEV
+## DDEV
 alias artisan="ddev php artisan"
 alias node="ddev exec node"
 alias npm="ddev npm"
@@ -66,6 +66,7 @@ alias composer="ddev composer"
 alias sql="ddev sequelace"
 alias php="ddev php"
 alias pest="ddev php ./vendor/bin/pest"
+## End DDEV Aliases
 
 # history setup
 HISTFILE=$HOME/.zhistory
@@ -85,3 +86,57 @@ eval "$(zoxide init zsh)"
 
 # path
 export PATH="/Users/dan/.jetbrains:$PATH"
+
+# mise
+eval "$(/Users/dan/.local/bin/mise activate zsh --shims)"
+
+## DDEV Aliases Toggle
+function toggle_ddev_aliases() {
+    local start_marker="## DDEV"
+    local end_marker="## End DDEV Aliases"
+    local toggled_aliases=0
+
+    # Read the .zshrc file line by line
+    while IFS= read -r line; do
+        # If the line is the start marker, begin toggling
+        if [[ "$line" == "$start_marker" ]]; then
+            toggled_aliases=1
+            echo "$line"
+            continue
+        fi
+
+        # If the line is the end marker, stop toggling
+        if [[ "$line" == "$end_marker" ]]; then
+            toggled_aliases=0
+            echo "$line"
+            continue
+        fi
+
+        # Toggle the lines between start and end markers
+        if (( toggled_aliases )); then
+            if [[ "$line" =~ ^#alias ]]; then
+                echo "${line#\#}"
+            elif [[ "$line" =~ ^alias ]]; then
+                echo "#$line"
+            else
+                echo "$line"
+            fi
+        else
+            echo "$line"
+        fi
+    done < ~/.zshrc > ~/.zshrc.tmp
+
+    # Replace the original .zshrc with the modified version
+    mv ~/.zshrc.tmp ~/.zshrc
+
+    # Reload the .zshrc file
+    source ~/.zshrc
+}
+
+[[ -s "/Users/dan/.gvm/scripts/gvm" ]] && source "/Users/dan/.gvm/scripts/gvm"
+
+# Completions
+autoload -Uz compinit && compinit
+
+# DDEV
+source "/Users/dan/.zsh/completions/ddev"
