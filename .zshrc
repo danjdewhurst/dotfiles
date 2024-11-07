@@ -8,6 +8,8 @@ fi
 [[ ! -d "$HOME/.antigen" ]] && git clone https://github.com/zsh-users/antigen.git "$HOME/.antigen"
 source "$HOME/.antigen/antigen.zsh"
 
+FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+
 # Load oh-my-zsh library
 antigen use oh-my-zsh
 
@@ -56,17 +58,7 @@ alias proj="cd ~/Projects"
 alias cd="z"
 alias gfa="git_fetch_all"
 alias gpa="git_pull_all"
-
-## DDEV
-alias artisan="ddev php artisan"
-alias node="ddev exec node"
-alias npm="ddev npm"
-alias npx="ddev exec npx"
-alias composer="ddev composer"
-alias sql="ddev sequelace"
-alias php="ddev php"
-alias pest="ddev php ./vendor/bin/pest"
-## End DDEV Aliases
+alias lg="lazygit"
 
 # history setup
 HISTFILE=$HOME/.zhistory
@@ -90,53 +82,40 @@ export PATH="/Users/dan/.jetbrains:$PATH"
 # mise
 eval "$(/Users/dan/.local/bin/mise activate zsh --shims)"
 
-## DDEV Aliases Toggle
-function toggle_ddev_aliases() {
-    local start_marker="## DDEV"
-    local end_marker="## End DDEV Aliases"
-    local toggled_aliases=0
+# FZF
+export FZF_DEFAULT_OPTS=" \
+--color=bg+:#414559,bg:#303446,spinner:#f2d5cf,hl:#e78284 \
+--color=fg:#c6d0f5,header:#e78284,info:#ca9ee6,pointer:#f2d5cf \
+--color=marker:#babbf1,fg+:#c6d0f5,prompt:#ca9ee6,hl+:#e78284 \
+--color=selected-bg:#51576d \
+--multi"
 
-    # Read the .zshrc file line by line
-    while IFS= read -r line; do
-        # If the line is the start marker, begin toggling
-        if [[ "$line" == "$start_marker" ]]; then
-            toggled_aliases=1
-            echo "$line"
-            continue
-        fi
+# BAT
+export BAT_THEME="Catppuccin Frappe"
 
-        # If the line is the end marker, stop toggling
-        if [[ "$line" == "$end_marker" ]]; then
-            toggled_aliases=0
-            echo "$line"
-            continue
-        fi
-
-        # Toggle the lines between start and end markers
-        if (( toggled_aliases )); then
-            if [[ "$line" =~ ^#alias ]]; then
-                echo "${line#\#}"
-            elif [[ "$line" =~ ^alias ]]; then
-                echo "#$line"
-            else
-                echo "$line"
-            fi
-        else
-            echo "$line"
-        fi
-    done < ~/.zshrc > ~/.zshrc.tmp
-
-    # Replace the original .zshrc with the modified version
-    mv ~/.zshrc.tmp ~/.zshrc
-
-    # Reload the .zshrc file
-    source ~/.zshrc
+# DDEV Aliases
+function load_ddev_aliases() {
+  if [[ -d ".ddev" ]]; then
+    alias artisan="ddev php artisan"
+    alias node="ddev exec node"
+    alias npm="ddev npm"
+    alias npx="ddev exec npx"
+    alias composer="ddev composer"
+    alias sql="ddev sequelace"
+    alias php="ddev php"
+    alias pest="ddev php ./vendor/bin/pest"
+    alias redis="ddev redis"
+    alias wp="ddev wp"
+    alias drush="ddev drush"
+  else
+    unalias artisan node npm npx composer sql php pest redis wp drush 2>/dev/null
+  fi
 }
 
-[[ -s "/Users/dan/.gvm/scripts/gvm" ]] && source "/Users/dan/.gvm/scripts/gvm"
+# Call the function when changing directories
+function chpwd() {
+  load_ddev_aliases
+}
 
-# Completions
-autoload -Uz compinit && compinit
-
-# DDEV
-source "/Users/dan/.zsh/completions/ddev"
+# Call the function initially
+load_ddev_aliases
