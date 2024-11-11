@@ -37,21 +37,6 @@ antigen apply
 ############## Custom stuff ##############################
 ##########################################################
 
-# Easy start and stop mariadb and redis for when switching between docker
-dbs() {
-    if [ "$1" = "start" ]; then
-        brew services start redis
-        brew services start mariadb
-        echo "Started Redis and MariaDB services."
-    elif [ "$1" = "stop" ]; then
-        brew services stop redis
-        brew services stop mariadb
-        echo "Stopped Redis and MariaDB services."
-    else
-        echo "Usage: dbs start|stop"
-    fi
-}
-
 # Custom aliases
 alias ls="eza --icons=always"
 alias proj="cd ~/Projects"
